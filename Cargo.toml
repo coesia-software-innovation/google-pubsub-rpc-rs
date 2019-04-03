@@ -1,0 +1,22 @@
+[package]
+name = "rpc-pubsub"
+version = "0.1.0"
+authors = ["Kiril Tzvetanov Goguev <kgoguev@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+protobuf  = "~2"
+grpcio = { version="~0.4", features = ["secure"]}
+futures = "0.1.25"
+clap = "2.32.0"
+regex = "1"
+
+[build-dependencies]
+glob = "0.3.0"
+protoc-grpcio = "1.0.1"
+
+[[bin]]
+name = "publisher"
+
+[[bin]]
+name = "subscriber"
