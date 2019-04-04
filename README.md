@@ -144,10 +144,10 @@ Assuming your project and topics have been setup correctly you can check Resourc
 
 
 ## Resources
-[Grpc Authentication](https://grpc.io/docs/guides/auth.html#authenticate-a-single-rpc-call-1)
-[Google PubSub Api Overview](https://cloud.google.com/pubsub/docs/reference/service_apis_overview)
-[Google PubSub RPC reference](https://cloud.google.com/pubsub/docs/reference/rpc/)
-[Google PubSub Emulator](https://cloud.google.com/pubsub/docs/emulator)
+* [Grpc Authentication](https://grpc.io/docs/guides/auth.html#authenticate-a-single-rpc-call-1)
+* [Google PubSub Api Overview](https://cloud.google.com/pubsub/docs/reference/service_apis_overview)
+* [Google PubSub RPC reference](https://cloud.google.com/pubsub/docs/reference/rpc/)
+* [Google PubSub Emulator](https://cloud.google.com/pubsub/docs/emulator)
 
 ## Credits
 * The developers @pingcap for their implementation of Grpc in rust
