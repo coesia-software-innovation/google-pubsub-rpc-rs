@@ -7,7 +7,7 @@ In this code base you should find 2 binary crates. One publisher and one subscri
 
 The publisher crate includes support for connecting and publishing to Google's pubsub emulator.
 
-Hopefully this can be used as an alternative to the REST/HTTP API based crate from Byron. (Google-apis-rs)[https://github.com/Byron/google-apis-rs]
+Hopefully this can be used as an alternative to the REST/HTTP API based crate from Byron. [Google-apis-rs](https://github.com/Byron/google-apis-rs)
 
 Presently I have not found any Rust client for Google Pubsub, Google provided client libraries so far only for 
 Go, Python, Java, and C#.
@@ -47,13 +47,13 @@ GOOGLE_APPLICATION_CREDENTIALS="/path/to/service/account.json" target/debug/subs
 
 ## GRPC implementation
 
-This example uses Grpcio rust implementation found(here)[https://github.com/pingcap/grpc-rs/]. 
+This example uses Grpcio rust implementation found [here](https://github.com/pingcap/grpc-rs/).
 
-I tried using the popular GRPC rust implementation from Stephancheg [https://github.com/stepancheg/grpc-rust] but could not successfully execute requests towards the Google endpoint.
+I tried using the popular GRPC rust implementation from Stephancheg (https://github.com/stepancheg/grpc-rust) but could not successfully execute requests towards the Google endpoint.
 The internal http client would die with no helpful error message. Additionally it did not support connections to endpoints that respond with multiple addresses. 
 
 ### Google/Protobuf Proto files
-A copy of the Google proto files from the repo [https://github.com/googleapis/googleapis/tree/master/google]
+A copy of the Google proto files from the [google-repo](https://github.com/googleapis/googleapis/tree/master/google)
 The following files were used:
 * v1/pubsub.proto
 * google/api/annotations.proto
@@ -63,12 +63,12 @@ The following files were used:
 * example.proto  - a custom proto file containing message definitions
 
 ## Dependencies
-* Protoc installed and in your PATH variable. see the following for more details on how to install it [https://github.com/protocolbuffers/protobuf/blob/master/src/README.md]
+* Protoc installed and in your PATH variable. see the following for more details on how to install it (https://github.com/protocolbuffers/protobuf/blob/master/src/README.md)
 
 ## Building
 
 This code relies on a cargo build script `build.rs` which will take the proto files and create a folder in src/proto with all the compiled output. 
-Should there be an issue building this example you might have to create the folder src/proto. I use the excellent grpc-rs compiler (protoc-grpcio)[https://github.com/mtp401/protoc-grpcio]
+Should there be an issue building this example you might have to create the folder src/proto. I use the excellent grpc-rs compiler [protoc-grpcio](https://github.com/mtp401/protoc-grpcio)
 
 ## Google Credentials and authentication
 
@@ -101,7 +101,7 @@ Topic as per documenation must be in the following format: projects/{project}/to
 
 Note: for the emulator the `{project}` can be any alphanumeric string. 
 
-(Topic details) [https://cloud.google.com/pubsub/docs/reference/rpc/google.pubsub.v1#google.pubsub.v1.Topic]
+[Topic details](https://cloud.google.com/pubsub/docs/reference/rpc/google.pubsub.v1#google.pubsub.v1.Topic)
 
 You may use the following environmental variable to set the application to publish to the pubsub emulator
 ```bash
@@ -144,13 +144,13 @@ Assuming your project and topics have been setup correctly you can check Resourc
 
 
 ## Resources
-(Grpc Authentication)[https://grpc.io/docs/guides/auth.html#authenticate-a-single-rpc-call-1]
-(Google PubSub Api Overview) [https://cloud.google.com/pubsub/docs/reference/service_apis_overview]
-(Google PubSub RPC reference)[https://cloud.google.com/pubsub/docs/reference/rpc/]
-(Google PubSub Emulator) [https://cloud.google.com/pubsub/docs/emulator]
+[Grpc Authentication](https://grpc.io/docs/guides/auth.html#authenticate-a-single-rpc-call-1)
+[Google PubSub Api Overview](https://cloud.google.com/pubsub/docs/reference/service_apis_overview)
+[Google PubSub RPC reference](https://cloud.google.com/pubsub/docs/reference/rpc/)
+[Google PubSub Emulator](https://cloud.google.com/pubsub/docs/emulator)
 
 ## Credits
-The developers @pingcap for their implementation of Grpc in rust
-@mtp401 for the programmatic api to the grpc-rs compiler
+* The developers @pingcap for their implementation of Grpc in rust
+* @mtp401 for the programmatic api to the grpc-rs compiler
 
 
