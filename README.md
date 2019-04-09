@@ -1,3 +1,9 @@
+<!--
+  Title: Google PubSub RPC in Rust
+  Description: A small set of examples on how to use GRPC, Google PubSub, and rust
+  Author: Kiril Tzvetanov Goguev
+  -->
+
 # Rust GooglePubSub RPC
 
 The following repo is an example of how to use the Google PubSub proto files in Rust to call the GRPC endpoint.
@@ -8,6 +14,8 @@ In this code base you should find 2 binary crates. One publisher and one subscri
 The publisher crate includes support for connecting and publishing to Google's pubsub emulator.
 
 Hopefully this can be used as an alternative to the REST/HTTP API based crate from Byron. [Google-apis-rs](https://github.com/Byron/google-apis-rs)
+
+Or at any rate this could also serve as a quick guide on how to generate proto files provided by Google using the Grpcio rust library
 
 Presently I have not found any Rust client for Google Pubsub, Google provided client libraries so far only for 
 Go, Python, Java, and C#.
@@ -69,10 +77,26 @@ The following is a simple example proto for sending a custom message
 ## Dependencies
 * Protoc installed and in your PATH variable. see the following for more details on how to install it (https://github.com/protocolbuffers/protobuf/blob/master/src/README.md)
 
-## Building
+## Building/Generating code from the proto files
 
 This code relies on a cargo build script `build.rs` which will take the proto files and create a folder in src/proto with all the compiled output. 
 Should there be an issue building this example you might have to create the folder `src/proto`. I use the excellent grpc-rs compiler [protoc-grpcio](https://github.com/mtp401/protoc-grpcio)
+
+You may have to install the following to get it to work first.
+
+```bash
+cargo install protobuf-codegen
+cargo install grpcio-compiler
+```
+
+### Protoc
+
+If you do not want to use the build.rs you can use the following code to generate the client/server code from the proto files. Pr
+
+```bash
+cd protos
+protoc -I. --rust_out=. --grpc_out=. --plugin=protoc-gen-grpc=`which grpc_rust_plugin` pubsub.proto
+```
 
 ## Google Credentials and authentication
 
