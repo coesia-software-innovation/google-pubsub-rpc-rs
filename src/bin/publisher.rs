@@ -17,6 +17,7 @@ use crate::proto::example::TestMessage;
 
 use clap::{crate_version, App, Arg};
 use protobuf::Message;
+use std::{thread, time};
 
 use regex::Regex;
 
@@ -50,6 +51,14 @@ fn main() {
                 .long("topic")
                 .env("TOPIC")
                 .validator(topic_format)
+                .takes_value(true),
+        )
+        .arg (Arg::with_name("publish_interval")
+                .short("i")
+                .help("The publishing interval in seconds")
+                .long("interval")
+                .env("PUBLISH_INTERVAL")
+                .default_value("30")
                 .takes_value(true),
         )
         .arg(
@@ -108,30 +117,34 @@ fn main() {
 
     let mut tmsg = TestMessage::new();
     tmsg.set_id(String::from("test-123"));
-    tmsg.set_code(123);
     tmsg.set_field_type(String::from("X"));
-
-    let b = tmsg.write_to_bytes().unwrap();
-
-    let mut r = PublishRequest::new();
-    r.set_topic(String::from(topic));
-
-    let mut msg = PubsubMessage::new();
-    msg.set_data(b);
-
-    let mut msgs = protobuf::RepeatedField::new();
-    msgs.push(msg);
-
-    r.set_messages(msgs);
 
     println!(
         "This example application will attempt to publish several messages to the following topic: {}",
         topic
     );
-    let res = pc.publish(&r);
 
-    match res {
-        Ok(s) => println!("Success! {:?}", s),
-        Err(e) => println!("Error {:?}", e),
+    let mut r = PublishRequest::new();
+    r.set_topic(String::from(topic));
+    let mut idx = 0;
+    let pubinterval = clap::value_t!(matches.value_of("publish_interval"), u64).unwrap();
+    loop {
+        tmsg.set_code(idx);
+        let b = tmsg.write_to_bytes().unwrap();
+
+        let mut msg = PubsubMessage::new();
+        msg.set_data(b);
+
+        let mut msgs = protobuf::RepeatedField::new();
+        msgs.push(msg);
+
+        r.set_messages(msgs);
+        let res = pc.publish(&r);
+        match res {
+            Ok(s) => println!("Success! {:?}", s),
+            Err(e) => println!("Error {:?}", e),
+        }
+        idx += 1;
+        thread::sleep(time::Duration::from_secs(pubinterval)); //sleep first then generate.
     }
 }

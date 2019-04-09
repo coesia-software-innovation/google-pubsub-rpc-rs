@@ -18,7 +18,9 @@ Disclaimer: I have no affiliation with Google.
 
 ## Quick starts with Pubsub emulator or Google Cloud Pubsub
 
-The following shows how to get started with the examples quickly we can build the pubsub emulator docker image and the rust executables via the following snippet
+The following shows how to get started with the examples quickly we can build the pubsub emulator docker image and the rust executables via the following snippet.
+
+By default the publisher will create and send a message to the topic every 30 seconds (this is configurable via the `--interval` switch).
 
 ```bash
 docker build . -t pubsub-emu
@@ -60,6 +62,8 @@ The following files were used:
 * google/api/http.proto
 * protobuf/empty.proto
 
+The following is a simple example proto for sending a custom message
+
 * example.proto  - a custom proto file containing message definitions
 
 ## Dependencies
@@ -68,7 +72,7 @@ The following files were used:
 ## Building
 
 This code relies on a cargo build script `build.rs` which will take the proto files and create a folder in src/proto with all the compiled output. 
-Should there be an issue building this example you might have to create the folder src/proto. I use the excellent grpc-rs compiler [protoc-grpcio](https://github.com/mtp401/protoc-grpcio)
+Should there be an issue building this example you might have to create the folder `src/proto`. I use the excellent grpc-rs compiler [protoc-grpcio](https://github.com/mtp401/protoc-grpcio)
 
 ## Google Credentials and authentication
 
@@ -82,7 +86,7 @@ export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service/account.json"
 or you can run it on the commandline should you not wish to export it.
 
 ```bash
-GOOGLE_APPLICATION_CREDENTIALS="/path/to/service/account.json" cargo run -- --topic projects/test-123/topics/test-topic
+GOOGLE_APPLICATION_CREDENTIALS="/path/to/service/account.json" cargo run --bin publisher -- --topic projects/test-123/topics/test-topic
 ```
 
 ### PubSub Emulator
@@ -108,17 +112,18 @@ You may use the following environmental variable to set the application to publi
 export PUBSUB_EMULATOR_HOST='localhost:8085'
 ```
 
-Should you not wish to set an environmental variable you can use the following command line switch
+Should you not wish to set an environmental variable you can use the following command line switch `--emulator <host:port>`
 
 ```bash
 cargo run --bin publisher -- --topic projects/cloud-xxxxx/topics/xxxx --emulator localhost:8085
 ```
 
-
 ## Running the Publisher
 
 Before you run this example application please insure that you have a topic already created in Google PubSub or that the pubsub emulator is running somewhere that is accessible.
-More help can be obtained via the `cargo run -- --help` flag.
+More help can be obtained via the `cargo run  --bin publisher -- --help` flag.
+
+You can control the delay between publishing messages (in seconds) by setting the command line switch `--interval <x>` where x is a number. By default this value is set to 30 seconds.
 
 To run towards Google pubsub simply run with just the `--topic` switch
 
@@ -128,14 +133,30 @@ cargo run --bin publisher -- --topic projects/cloud-xxxxx/topics/xxxx
 Success! message_ids: "XXXXXXXX"
 ```
 
-To run towards the Google pubsub emulator include the environmental variable 
+To run towards the Google pubsub emulator include the environmental variable  or the switch `--emulator localhost:8085`
 
 *OBS! If no subscriptions are set on the topic, messages will be published but it is like throwing them into /dev/null, to get around this just run an instance of the subscriber*
 
 ## Running the Subscriber
 
+The subscriber uses Streaming Pull to recieve messages from the PubSub topic. Messages will come in as they are produced by the publisher.
+It demonstrates how one can set up a subscription and then process messages as they get published to the PubSub topic. 
+
+The subscriber code will first attempt to make a subscription with the name given through the commandline switch `--subname` or generate a random one similar to docker if no name is set. 
+These subscription names must be unique and in the format of `projects/{projectid}/subscriptions/{subname}`
+
+Should there be an existing subscription on the topic, the subscriber example will attempt at least once to delete and recreate the subscription. There is however a `get_subscription` function which could be used to obtain an existing one.
+However I did want to show an example of the deletion being used.
+
+
 ```bash
-cargo run --bin subscriber -- --topic projects/cloud-xxxxx/topics/xxxx
+cargo run --bin subscriber -- --topic projects/cloud-xxxxx/topics/xxxx --emulator localhost:8085
+Streaming Client Example
+Subscription created successfully: name: "projects/cloud-xxxxx/subscriptions/cool_kournikova" topic: "projects/cloud-xxxxx/topics/xx12" push_config {} ack_deadline_seconds: 10 message_retention_duration {seconds: 604800}
+Successfully started sending the request
+Recieving messages...
+[ack_id:"projects/cloud-xxxxx/subscriptions/cool_kournikova" message: {data: "\n\010test-123\020\014\032\001X" message_id: "2291" publish_time {seconds: 155481415661}}]
+id: "test-123" code: 12 type: "X"
 ```
 ## Checking results on Google Cloud Platform
 
